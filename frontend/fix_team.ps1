@@ -1,0 +1,32 @@
+﻿$f = "e:\MACRO\frontend\src\pages\public\Team.jsx"
+$c = [System.IO.File]::ReadAllText($f)
+$c = $c -replace 'min-h-screen flex items-center justify-center bg-\[#030712\]', 'min-h-screen flex items-center justify-center bg-white'
+$c = $c -replace 'border-4 border-indigo-500/40 border-t-indigo-400', 'border-4 border-indigo-200 border-t-indigo-500'
+$c = $c -replace '"relative py-32 overflow-hidden bg-\[#030712\]"', '"relative py-32 overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/40"'
+$c = $c -replace 'relative py-32 overflow-hidden bg-\[#030712\]', 'relative py-32 overflow-hidden bg-gradient-to-br from-indigo-50/80 via-white to-violet-50/40'
+$c = $c -replace 'bg-\[radial-gradient\(ellipse_[^)]+rgba\([^)]+\),transparent\)\]', 'bg-[radial-gradient(ellipse_70%_50%_at_50%_0%,rgba(99,102,241,0.07),transparent)]'
+$c = $c -replace 'backgroundImage: ''radial-gradient\(circle, #fff 1px, transparent 1px\)''', 'backgroundImage: ''radial-gradient(circle, #6366f1 1px, transparent 1px)'''
+$c = $c -replace 'backgroundImage: "radial-gradient\(circle, #fff 1px, transparent 1px\)"', 'backgroundImage: "radial-gradient(circle, #6366f1 1px, transparent 1px)"'
+$c = $c -replace 'bg-indigo-500/10 border border-indigo-400/30 text-indigo-300', 'bg-indigo-50 border border-indigo-200 text-indigo-600'
+$c = $c -replace 'bg-violet-500/10 border border-violet-400/30 text-violet-300', 'bg-violet-50 border border-violet-200 text-violet-700'
+$c = $c -replace 'font-black text-white leading-tight', 'font-black text-slate-900 leading-tight'
+$c = $c -replace 'font-black text-white leading-\[1\.05\]', 'font-black text-slate-900 leading-[1.05]'
+$c = $c -replace '"text-white/55', '"text-slate-500'
+$c = $c -replace '"text-white/60', '"text-slate-500'
+$c = $c -replace '"text-white/70', '"text-slate-500'
+$c = $c -replace 'bg-indigo-600/20', 'bg-indigo-200/40'
+$c = $c -replace 'bg-violet-600/20', 'bg-violet-200/30'
+$c = $c -replace 'bg-indigo-600/15', 'bg-indigo-200/30'
+$c = $c -replace 'bg-white/5 border border-white/10', 'bg-white/90 border border-slate-100 shadow-sm'
+$c = $c -replace 'bg-white/6 border border-white/10', 'bg-white/90 border border-slate-100 shadow-sm'
+$c = $c -replace 'hover:bg-white/10 hover:border-white/20', 'hover:shadow-md hover:border-indigo-200'
+$c = $c -replace '"font-bold text-white', '"font-bold text-slate-900'
+$c = $c -replace '"font-semibold text-white', '"font-semibold text-slate-900'
+$c = $c -replace '"text-white/60 text-sm', '"text-slate-500 text-sm'
+$c = $c -replace '"text-indigo-400', '"text-indigo-600'
+$c = $c -replace '"text-indigo-300"', '"text-indigo-600"'
+$c = $c -replace 'from-\[#030712\] to-transparent', 'from-white to-transparent'
+$c = $c -replace 'bg-\[#030712\]', 'bg-white'
+[System.IO.File]::WriteAllText($f, $c, [System.Text.Encoding]::UTF8)
+$remaining = (Select-String -Path $f -Pattern 'bg-\[#030712\]').Count
+Write-Host "Team.jsx fixed. Dark remaining: $remaining"

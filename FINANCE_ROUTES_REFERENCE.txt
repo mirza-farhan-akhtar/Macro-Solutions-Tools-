@@ -1,0 +1,214 @@
+// FINANCE ROUTES TEMPLATE
+// Add this to your routes/api.php file inside the authenticated Route::middleware('auth:sanctum') group
+
+use App\Http\Controllers\Finance\{
+    InvoiceController,
+    ExpenseController,
+    IncomeController,
+    FinanceDashboardController,
+};
+
+// Finance Routes - All protected by authentication
+Route::middleware('auth:sanctum')->prefix('finance')->group(function () {
+
+    // DASHBOARD & REPORTS - All require finance.view or finance.reports
+    Route::middleware('check-permission:finance.view|finance.reports')->group(function () {
+        Route::get('dashboard', [FinanceDashboardController::class, 'dashboard']);
+    });
+
+    Route::middleware('check-permission:finance.reports')->group(function () {
+        Route::get('reports/profit-loss', [FinanceDashboardController::class, 'profitLoss']);
+        Route::get('reports/revenue', [FinanceDashboardController::class, 'revenue']);
+        Route::get('reports/expense', [FinanceDashboardController::class, 'expense']);
+        Route::get('reports/export', [FinanceDashboardController::class, 'export']);
+    });
+
+    // INVOICE ROUTES
+    // View invoices
+    Route::middleware('check-permission:finance.view')->group(function () {
+        Route::get('invoices', [InvoiceController::class, 'index']);
+        Route::get('invoices/{id}', [InvoiceController::class, 'show']);
+    });
+
+    // Create invoices and add items
+    Route::middleware('check-permission:finance.create')->group(function () {
+        Route::post('invoices', [InvoiceController::class, 'store']);
+        Route::post('invoices/{id}/items', [InvoiceController::class, 'addItems']);
+        Route::post('invoices/{id}/pay', [InvoiceController::class, 'recordPayment']);
+    });
+
+    // Edit invoices
+    Route::middleware('check-permission:finance.edit')->group(function () {
+        Route::put('invoices/{id}', [InvoiceController::class, 'update']);
+        Route::post('invoices/{id}/send', [InvoiceController::class, 'send']);
+    });
+
+    // Delete invoices
+    Route::middleware('check-permission:finance.delete')->group(function () {
+        Route::delete('invoices/{id}', [InvoiceController::class, 'destroy']);
+    });
+
+    // EXPENSE ROUTES
+    // View expenses
+    Route::middleware('check-permission:finance.view')->group(function () {
+        Route::get('expenses', [ExpenseController::class, 'index']);
+        Route::get('expenses/{id}', [ExpenseController::class, 'show']);
+        Route::get('expense-categories', [ExpenseController::class, 'categories']);
+        Route::get('expenses/summary/by-category', [ExpenseController::class, 'summaryByCategory']);
+    });
+
+    // Create expenses and categories
+    Route::middleware('check-permission:finance.create')->group(function () {
+        Route::post('expenses', [ExpenseController::class, 'store']);
+        Route::post('expense-categories', [ExpenseController::class, 'storeCategory']);
+    });
+
+    // Edit expenses
+    Route::middleware('check-permission:finance.edit')->group(function () {
+        Route::put('expenses/{id}', [ExpenseController::class, 'update']);
+        Route::patch('expenses/{id}/approve', [ExpenseController::class, 'approve']);
+        Route::patch('expenses/{id}/reject', [ExpenseController::class, 'reject']);
+        Route::put('expense-categories/{id}', [ExpenseController::class, 'updateCategory']);
+    });
+
+    // Delete expenses
+    Route::middleware('check-permission:finance.delete')->group(function () {
+        Route::delete('expenses/{id}', [ExpenseController::class, 'destroy']);
+        Route::delete('expense-categories/{id}', [ExpenseController::class, 'destroyCategory']);
+    });
+
+    // INCOME ROUTES
+    // View income
+    Route::middleware('check-permission:finance.view')->group(function () {
+        Route::get('incomes', [IncomeController::class, 'index']);
+        Route::get('incomes/{id}', [IncomeController::class, 'show']);
+        Route::get('incomes/summary', [IncomeController::class, 'summary']);
+        Route::get('incomes/trends/monthly', [IncomeController::class, 'monthlyTrends']);
+    });
+
+    // Create income records
+    Route::middleware('check-permission:finance.create')->group(function () {
+        Route::post('incomes', [IncomeController::class, 'store']);
+    });
+
+    // Edit income
+    Route::middleware('check-permission:finance.edit')->group(function () {
+        Route::put('incomes/{id}', [IncomeController::class, 'update']);
+    });
+
+    // Delete income
+    Route::middleware('check-permission:finance.delete')->group(function () {
+        Route::delete('incomes/{id}', [IncomeController::class, 'destroy']);
+    });
+});
+
+/*
+PERMISSION REFERENCE
+====================
+
+Required Permissions (add to your permission system):
+- finance.view     : View financial data
+- finance.create   : Create invoices, expenses, income
+- finance.edit     : Edit existing financial records  
+- finance.delete   : Delete financial records
+- finance.reports  : Access financial reports
+
+ROLE ASSIGNMENTS
+================
+
+Finance Manager:
+- finance.view
+- finance.create
+- finance.edit
+- finance.reports
+
+Accountant (Read-Only):
+- finance.view
+- finance.reports
+
+Admin:
+- All permissions (automatic bypass)
+
+HR Manager:
+- finance.view (restricted to payroll)
+
+MIDDLEWARE
+==========
+
+The 'check-permission' middleware:
+1. Checks if user has the specified permission
+2. Super Admin automatically bypasses
+3. Returns 403 if permission denied
+
+Setup in app/Http/Middleware/CheckPermission.php:
+
+Route model binding uses the permission in the middleware.
+Example route: Route::middleware('check-permission:finance.view')
+
+SWAGGER/API DOC REFERENCE
+=========================
+
+Group: Finance Management
+Base URL: /api/finance
+
+📊 DASHBOARD
+GET /dashboard - Get dashboard metrics
+- Permissions: finance.view OR finance.reports
+- Response: Revenue, Expenses, Profit, Invoices, Payments
+
+📈 REPORTS
+GET /reports/profit-loss - P&L Statement
+GET /reports/revenue - Revenue Analysis
+GET /reports/expense - Expense Analysis
+GET /reports/export - CSV Export
+- Permissions: finance.reports
+
+📄 INVOICES
+GET /invoices - List invoices (paginated)
+GET /invoices/{id} - Get invoice details
+POST /invoices - Create invoice
+PUT /invoices/{id} - Update invoice
+DELETE /invoices/{id} - Delete invoice
+POST /invoices/{id}/items - Add line items
+POST /invoices/{id}/send - Send invoice
+POST /invoices/{id}/pay - Record payment
+
+💰 EXPENSES
+GET /expenses - List expenses (paginated)
+GET /expenses/{id} - Get expense details
+POST /expenses - Create expense
+PUT /expenses/{id} - Update expense
+DELETE /expenses/{id} - Delete expense
+PATCH /expenses/{id}/approve - Approve expense
+PATCH /expenses/{id}/reject - Reject expense
+GET /expense-categories - Get categories
+POST /expense-categories - Create category
+PUT /expense-categories/{id} - Update category
+DELETE /expense-categories/{id} - Delete category
+
+💵 INCOME
+GET /incomes - List incomes (paginated)
+GET /incomes/{id} - Get income details
+POST /incomes - Record income
+PUT /incomes/{id} - Update income
+DELETE /incomes/{id} - Delete income
+GET /incomes/summary - Get summary
+GET /incomes/trends/monthly - Monthly trends
+
+TESTING
+=======
+
+To test routes with Postman:
+1. Set Authorization header with Bearer token
+2. Use appropriate HTTP method
+3. Include permission in URL query if needed
+4. Check response for 'success: true'
+
+Error responses:
+- 401: Unauthorized (no token)
+- 403: Forbidden (missing permission)
+- 404: Not found
+- 422: Validation error
+- 500: Server error
+
+*/

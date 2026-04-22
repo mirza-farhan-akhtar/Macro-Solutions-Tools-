@@ -1,0 +1,18 @@
+export { HRDashboard as default } from './Dashboard';
+export { Recruitment } from './Recruitment';
+export { Employees } from './Employees';
+export { Attendance } from './Attendance';
+export { Leaves } from './Leaves';
+export { Performance } from './Performance';
+export { Reports } from './Reports';
+export { Departments } from './Departments';
+export { DepartmentDetail } from './DepartmentDetail';
+export { DepartmentMembers } from './DepartmentMembers';
+export { DepartmentBudget } from './DepartmentBudget';
+export { DepartmentSettings } from './DepartmentSettings';
+export { DepartmentProjects } from './DepartmentProjects';
+export { DepartmentTasks } from './DepartmentTasks';
+export { DepartmentMeetings } from './DepartmentMeetings';
+export { DepartmentProjectRequests } from './DepartmentProjectRequests';
+export { DepartmentAnalytics } from './DepartmentAnalytics';
+export { DepartmentTimeline } from './DepartmentTimeline';
