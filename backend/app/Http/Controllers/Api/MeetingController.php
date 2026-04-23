@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -116,7 +116,7 @@ class MeetingController extends Controller
     }
 
     /**
-     * GET /employee/meetings  — employee sees only their own meetings
+     * GET /employee/meetings  â€” employee sees only their own meetings
      */
     public function myMeetings(Request $request)
     {

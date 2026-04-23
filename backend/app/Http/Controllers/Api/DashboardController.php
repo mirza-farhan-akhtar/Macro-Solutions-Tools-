@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -164,7 +164,7 @@ class DashboardController extends Controller
             return $this->employeeNotifications($user);
         }
 
-        // ── Admin / HR notifications ──────────────────────────────────────────
+        // â”€â”€ Admin / HR notifications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         $newLeads = Lead::where('status', 'new')->count();
         $newApplications = Application::where('status', 'pending')->count();
         $newAppointments = Appointment::where('status', 'pending')->count();
@@ -232,7 +232,7 @@ class DashboardController extends Controller
             ->take(3)
             ->get(['id', 'title', 'meeting_date', 'meeting_time', 'location']);
 
-        // Today's attendance — notify if employee hasn't checked in yet
+        // Today's attendance â€” notify if employee hasn't checked in yet
         $todayAttendance = $employee
             ? \App\Models\Attendance::where('employee_id', $employee->id)
                 ->whereDate('date', today())

@@ -1,4 +1,5 @@
 ﻿import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { Heart, ArrowRight, Shield, Users, Activity, FileText } from 'lucide-react';
 import { IndustryVector } from '../../../components/HeroVectors';
 import { useLeadForm } from '../../../context/LeadFormContext';

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Api;
 
@@ -12,13 +12,13 @@ use Illuminate\Http\Request;
 
 class EmployeeSelfController extends Controller
 {
-    /** Helper — resolve the authenticated user's Employee record. */
+    /** Helper â€” resolve the authenticated user's Employee record. */
     private function resolveEmployee()
     {
         return Employee::where('user_id', auth()->id())->first();
     }
 
-    // ─── Profile ──────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function me()
     {
@@ -31,7 +31,7 @@ class EmployeeSelfController extends Controller
         return response()->json(['success' => true, 'data' => $employee]);
     }
 
-    // ─── Attendance ───────────────────────────────────────────────────────────
+    // â”€â”€â”€ Attendance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /** Return own attendance records filtered by month. */
     public function myAttendance(Request $request)
@@ -136,7 +136,7 @@ class EmployeeSelfController extends Controller
         ]);
     }
 
-    // ─── Leaves ───────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Leaves â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private const LEAVE_TYPES = ['Sick Leave', 'Casual Leave', 'Annual Leave', 'Maternity Leave', 'Paternity Leave'];
 
@@ -238,7 +238,7 @@ class EmployeeSelfController extends Controller
         ], 201);
     }
 
-    // ─── Dashboard ────────────────────────────────────────────────────────────
+    // â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public function dashboard()
     {

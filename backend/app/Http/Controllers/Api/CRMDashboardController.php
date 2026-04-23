@@ -1,6 +1,6 @@
-<?php
+﻿<?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\Api;
 
 use App\Models\Lead;
 use App\Models\Deal;

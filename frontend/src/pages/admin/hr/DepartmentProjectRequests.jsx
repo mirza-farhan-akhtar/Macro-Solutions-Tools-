@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, CheckCircle2, Clock, XCircle, Plus, X } from 'lucide-react';
@@ -49,6 +49,9 @@ export function DepartmentProjectRequests() {
         departmentAPI.getDepartmentProjectRequestsSent(slug),
         departmentAPI.getDepartmentProjects(slug),
         departmentAPI.getDepartments(),
+      ]);
+      if (incomingRes.status === 'fulfilled') {
+        const d = incomingRes.value?.data?.data || incomingRes.value?.data || [];
         setRequests(Array.isArray(d) ? d : []);
       }
       if (sentRes.status === 'fulfilled') {
@@ -144,7 +147,7 @@ export function DepartmentProjectRequests() {
         <div className="flex-shrink-0 mt-1">{getStatusIcon(request.status)}</div>
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-1 flex-wrap">
-            <h3 className="text-lg font-semibold text-gray-900">{request.project?.name || '—'}</h3>
+            <h3 className="text-lg font-semibold text-gray-900">{request.project?.name || 'â€”'}</h3>
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
               (request.status || '').toLowerCase() === 'approved' ? 'bg-green-100 text-green-700' :
               (request.status || '').toLowerCase() === 'rejected' ? 'bg-red-100 text-red-700' :
@@ -153,8 +156,8 @@ export function DepartmentProjectRequests() {
           </div>
           <p className="text-sm text-gray-600 mb-2">
             {isSent
-              ? <>To: <span className="font-medium">{request.targetDepartment?.name || '—'}</span></>
-              : <>From: <span className="font-medium">{request.requestingDepartment?.name || '—'}</span></>}
+              ? <>To: <span className="font-medium">{request.targetDepartment?.name || 'â€”'}</span></>
+              : <>From: <span className="font-medium">{request.requestingDepartment?.name || 'â€”'}</span></>}
           </p>
           {request.request_message && (
             <p className="text-sm text-gray-700 bg-white/70 rounded-lg px-3 py-2 mb-2">{request.request_message}</p>
@@ -342,207 +345,6 @@ export function DepartmentProjectRequests() {
           </motion.div>
         </motion.div>
       )}
-    </div>
-  );
-}
-
-export default DepartmentProjectRequests;
-
-
-export function DepartmentProjectRequests() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const [department, setDepartment] = useState(null);
-  const [requests, setRequests] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    loadData();
-  }, [slug]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setRequests([]);
-      let dept = null;
-      
-      try {
-        const response = await departmentAPI.getDepartment(slug);
-        const deptPayload = response.data?.data || response.data;
-        if (deptPayload && typeof deptPayload === 'object' && deptPayload.name) {
-          dept = {
-            id: deptPayload.id || slug,
-            name: deptPayload.name,
-            description: deptPayload.description || ''
-          };
-        }
-      } catch (error) {
-        console.warn('Department API failed:', error.message);
-      }
-      
-      if (!dept) {
-        dept = { id: slug, name: `Department ${slug}`, description: '' };
-      }
-      setDepartment(dept);
-
-      // Fetch project requests from API
-      try {
-        const response = await departmentAPI.getDepartmentProjectRequests(slug);
-        const requestsData = response.data?.data || response.data;
-        const requestsList = Array.isArray(requestsData) ? requestsData : [];
-        setRequests(requestsList);
-      } catch (error) {
-        console.warn('Project requests API failed:', error.message);
-        setRequests([]);
-      }
-    } catch (error) {
-      console.error('Error loading data:', error);
-      toast.error('Failed to load project requests');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch(status) {
-      case 'pending':
-        return <Clock className="w-5 h-5 text-yellow-600" />;
-      case 'approved':
-        return <CheckCircle2 className="w-5 h-5 text-green-600" />;
-      case 'rejected':
-        return <XCircle className="w-5 h-5 text-red-600" />;
-      default:
-        return <Clock className="w-5 h-5 text-gray-400" />;
-    }
-  };
-
-  const getStatusBg = (status) => {
-    switch(status) {
-      case 'pending': return 'bg-yellow-50';
-      case 'approved': return 'bg-green-50';
-      case 'rejected': return 'bg-red-50';
-      default: return 'bg-gray-50';
-    }
-  };
-
-  const handleApprove = (requestId) => {
-    setRequests(requests.map(r => r.id === requestId ? { ...r, status: 'approved' } : r));
-    toast.success('Request approved');
-  };
-
-  const handleReject = (requestId) => {
-    setRequests(requests.map(r => r.id === requestId ? { ...r, status: 'rejected' } : r));
-    toast.success('Request rejected');
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate(-1)}
-                className="p-2 rounded-lg hover:bg-white/60 transition"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">{department?.name} - Project Requests</h1>
-                <p className="text-gray-600 mt-1">Manage cross-department project assignments</p>
-              </div>
-            </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              <Plus className="w-4 h-4" />
-              Send Request
-            </motion.button>
-          </div>
-        </motion.div>
-
-        {/* Requests List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          {requests.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-              <Send className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No project requests</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {requests.map((request) => (
-                <motion.div
-                  key={request.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  className={`${getStatusBg(request.status)} rounded-xl border border-gray-200 p-6 hover:shadow-md transition`}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start gap-4 flex-1">
-                      <div className="flex-shrink-0 mt-1">
-                        {getStatusIcon(request.status)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{request.projectName}</h3>
-                          <span className="text-sm text-gray-600">from <span className="font-medium">{request.fromDepartment}</span></span>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-3">{request.description}</p>
-                        <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                          <span>Resources needed: {request.members} members</span>
-                          <span>Deadline: {new Date(request.deadline).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <button className="flex-shrink-0 p-2 hover:bg-white rounded-lg transition">
-                      <MoreVertical className="w-4 h-4 text-gray-500" />
-                    </button>
-                  </div>
-
-                  {/* Actions */}
-                  {request.status === 'pending' && (
-                    <div className="flex gap-3 mt-4 pt-4 border-t border-gray-300">
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleApprove(request.id)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />
-                        Approve
-                      </motion.button>
-                      <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => handleReject(request.id)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
-                      >
-                        <XCircle className="w-4 h-4" />
-                        Reject
-                      </motion.button>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 ﻿import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { ShoppingCart, ArrowRight, TrendingUp, CreditCard, Users, BarChart3 } from 'lucide-react';
 import { IndustryVector } from '../../../components/HeroVectors';
 import { useLeadForm } from '../../../context/LeadFormContext';
